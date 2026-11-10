@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <rect width="1200" height="675" fill="#F8FAFC"/>
+  <!-- Top Banner -->
+  <rect width="1200" height="56" fill="#1E293B"/>
+  <rect x="24" y="14" width="28" height="28" rx="6" fill="#0078D4"/>
+  <text x="31" y="34" font-family="Segoe UI, sans-serif" font-size="16" fill="#FFFFFF" font-weight="bold">📦</text>
+  <text x="64" y="34" font-family="Segoe UI, sans-serif" font-size="16" fill="#FFFFFF" font-weight="bold">Product Performance &amp; Assortment Analytics</text>
+  <text x="64" y="48" font-family="Segoe UI, sans-serif" font-size="10" fill="#94A3B8">Catalog Pareto Analysis, Price Elasticity &amp; Category Returns</text>
+
+  <!-- Left: Top Categories Bar -->
+  <rect x="24" y="80" width="560" height="380" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="44" y="110" font-family="Segoe UI, sans-serif" font-size="14" fill="#0F172A" font-weight="bold">Top Product Categories by Gross Sales</text>
+  <!-- Horizontal Bars -->
+  <text x="44" y="145" font-family="Segoe UI, sans-serif" font-size="11" fill="#334155">Health &amp; Beauty</text>
+  <rect x="180" y="132" width="340" height="18" fill="#0078D4" rx="3"/>
+  <text x="525" y="145" font-family="Segoe UI, sans-serif" font-size="10" fill="#64748B" font-weight="bold">$1.26M</text>
+
+  <text x="44" y="180" font-family="Segoe UI, sans-serif" font-size="11" fill="#334155">Watches &amp; Gifts</text>
+  <rect x="180" y="167" width="325" height="18" fill="#0078D4" rx="3"/>
+  <text x="510" y="180" font-family="Segoe UI, sans-serif" font-size="10" fill="#64748B" font-weight="bold">$1.21M</text>
+
+  <text x="44" y="215" font-family="Segoe UI, sans-serif" font-size="11" fill="#334155">Bed, Bath &amp; Table</text>
+  <rect x="180" y="202" width="280" height="18" fill="#0078D4" rx="3"/>
+  <text x="465" y="215" font-family="Segoe UI, sans-serif" font-size="10" fill="#64748B" font-weight="bold">$1.04M</text>
+
+  <text x="44" y="250" font-family="Segoe UI, sans-serif" font-size="11" fill="#334155">Sports &amp; Leisure</text>
+  <rect x="180" y="237" width="265" height="18" fill="#0078D4" rx="3"/>
+  <text x="450" y="250" font-family="Segoe UI, sans-serif" font-size="10" fill="#64748B" font-weight="bold">$988K</text>
+
+  <text x="44" y="285" font-family="Segoe UI, sans-serif" font-size="11" fill="#334155">Computers &amp; Acc</text>
+  <rect x="180" y="272" width="245" height="18" fill="#0078D4" rx="3"/>
+  <text x="430" y="285" font-family="Segoe UI, sans-serif" font-size="10" fill="#64748B" font-weight="bold">$912K</text>
+
+  <text x="44" y="320" font-family="Segoe UI, sans-serif" font-size="11" fill="#334155">Furniture &amp; Decor</text>
+  <rect x="180" y="307" width="195" height="18" fill="#0078D4" rx="3"/>
+  <text x="380" y="320" font-family="Segoe UI, sans-serif" font-size="10" fill="#64748B" font-weight="bold">$730K</text>
+
+  <text x="44" y="355" font-family="Segoe UI, sans-serif" font-size="11" fill="#334155">Housewares</text>
+  <rect x="180" y="342" width="170" height="18" fill="#0078D4" rx="3"/>
+  <text x="355" y="355" font-family="Segoe UI, sans-serif" font-size="10" fill="#64748B" font-weight="bold">$632K</text>
+
+  <text x="44" y="390" font-family="Segoe UI, sans-serif" font-size="11" fill="#334155">Cool Stuff</text>
+  <rect x="180" y="377" width="170" height="18" fill="#0078D4" rx="3"/>
+  <text x="355" y="390" font-family="Segoe UI, sans-serif" font-size="10" fill="#64748B" font-weight="bold">$635K</text>
+
+  <!-- Right: Elasticity Scatter -->
+  <rect x="608" y="80" width="568" height="380" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="628" y="110" font-family="Segoe UI, sans-serif" font-size="14" fill="#0F172A" font-weight="bold">Price vs Volume Elasticity Scatter</text>
+  <!-- Scatter Circles -->
+  <circle cx="720" cy="180" r="28" fill="#10B981" fill-opacity="0.7"/>
+  <text x="660" y="220" font-family="Segoe UI, sans-serif" font-size="10" fill="#065F46" font-weight="bold">Bed, Bath (11.1k units / $93 avg)</text>
+
+  <circle cx="780" cy="230" r="24" fill="#0078D4" fill-opacity="0.7"/>
+  <text x="730" y="270" font-family="Segoe UI, sans-serif" font-size="10" fill="#1E40AF" font-weight="bold">Health &amp; Beauty (9.7k units / $130 avg)</text>
+
+  <circle cx="950" cy="290" r="20" fill="#F59E0B" fill-opacity="0.7"/>
+  <text x="890" y="325" font-family="Segoe UI, sans-serif" font-size="10" fill="#92400E" font-weight="bold">Watches (6.0k units / $201 avg)</text>
+
+  <!-- Bottom: Category Diagnostic Matrix -->
+  <rect x="24" y="480" width="1152" height="175" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="44" y="510" font-family="Segoe UI, sans-serif" font-size="13" fill="#0F172A" font-weight="bold">Pareto Rule Diagnostic (80/20 Assortment Concentration)</text>
+  <text x="44" y="535" font-family="Segoe UI, sans-serif" font-size="11" fill="#475569">● Top 20% of SKU products generate 78.4% of total marketplace gross merchandise volume.</text>
+  <text x="44" y="560" font-family="Segoe UI, sans-serif" font-size="11" fill="#475569">● Catalog Tail: Over 14,000 listed products recorded &lt;2 sales over 24 months, indicating dead stock bloat.</text>
+  <text x="44" y="585" font-family="Segoe UI, sans-serif" font-size="11" fill="#475569">● Quality Perceptions: Stationery (4.23 ★) and Garden Tools (4.22 ★) lead review ratings; Telephony (3.95 ★) lags.</text>
+</svg>

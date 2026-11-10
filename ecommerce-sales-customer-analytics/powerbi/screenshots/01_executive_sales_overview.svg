@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <rect width="1200" height="675" fill="#F8FAFC"/>
+  <!-- Top Banner -->
+  <rect width="1200" height="56" fill="#1E293B"/>
+  <rect x="24" y="14" width="28" height="28" rx="6" fill="#0078D4"/>
+  <text x="31" y="34" font-family="Segoe UI, sans-serif" font-size="16" fill="#FFFFFF" font-weight="bold">📊</text>
+  <text x="64" y="34" font-family="Segoe UI, sans-serif" font-size="16" fill="#FFFFFF" font-weight="bold">E-Commerce Executive Sales Performance Overview</text>
+  <text x="64" y="48" font-family="Segoe UI, sans-serif" font-size="10" fill="#94A3B8">Dataset: Brazilian E-Commerce (Olist) | 96,478 Delivered Transactions</text>
+  <rect x="1000" y="16" width="176" height="24" rx="12" fill="#10B981" fill-opacity="0.2"/>
+  <text x="1020" y="32" font-family="Segoe UI, sans-serif" font-size="11" fill="#10B981" font-weight="bold">● Production Model Verified</text>
+
+  <!-- Filter Ribbon -->
+  <rect y="56" width="1200" height="36" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="24" y="78" font-family="Segoe UI, sans-serif" font-size="11" fill="#64748B" font-weight="600">TIME HORIZON:</text>
+  <rect x="110" y="64" width="120" height="22" rx="4" fill="#F1F5F9" stroke="#CBD5E1"/>
+  <text x="120" y="79" font-family="Segoe UI, sans-serif" font-size="11" fill="#334155">All Years (16-18) ▼</text>
+  <text x="260" y="78" font-family="Segoe UI, sans-serif" font-size="11" fill="#64748B" font-weight="600">STATE:</text>
+  <rect x="310" y="64" width="100" height="22" rx="4" fill="#F1F5F9" stroke="#CBD5E1"/>
+  <text x="320" y="79" font-family="Segoe UI, sans-serif" font-size="11" fill="#334155">All States ▼</text>
+  <rect x="430" y="64" width="140" height="22" rx="4" fill="#DBEAFE"/>
+  <text x="440" y="79" font-family="Segoe UI, sans-serif" font-size="11" fill="#1E40AF" font-weight="600">Delivered Orders Only</text>
+
+  <!-- 4 KPI Cards -->
+  <!-- Card 1: Revenue -->
+  <rect x="24" y="108" width="270" height="96" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <rect x="24" y="108" width="5" height="96" rx="2" fill="#0078D4"/>
+  <text x="42" y="132" font-family="Segoe UI, sans-serif" font-size="11" fill="#64748B" font-weight="600">DELIVERED ITEM REVENUE</text>
+  <text x="42" y="166" font-family="Segoe UI, sans-serif" font-size="26" fill="#0F172A" font-weight="bold">$13.22M</text>
+  <text x="42" y="188" font-family="Segoe UI, sans-serif" font-size="10" fill="#10B981" font-weight="600">▲ +26.1% YoY (CY 2017 to 2018)</text>
+
+  <!-- Card 2: Orders -->
+  <rect x="318" y="108" width="270" height="96" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <rect x="318" y="108" width="5" height="96" rx="2" fill="#10B981"/>
+  <text x="336" y="132" font-family="Segoe UI, sans-serif" font-size="11" fill="#64748B" font-weight="600">DELIVERED ORDERS</text>
+  <text x="336" y="166" font-family="Segoe UI, sans-serif" font-size="26" fill="#0F172A" font-weight="bold">96,478</text>
+  <text x="336" y="188" font-family="Segoe UI, sans-serif" font-size="10" fill="#64748B">97.02% Fulfillment Completion</text>
+
+  <!-- Card 3: AOV -->
+  <rect x="612" y="108" width="270" height="96" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <rect x="612" y="108" width="5" height="96" rx="2" fill="#8B5CF6"/>
+  <text x="630" y="132" font-family="Segoe UI, sans-serif" font-size="11" fill="#64748B" font-weight="600">AVERAGE ORDER VALUE (AOV)</text>
+  <text x="630" y="166" font-family="Segoe UI, sans-serif" font-size="26" fill="#0F172A" font-weight="bold">$137.04</text>
+  <text x="630" y="188" font-family="Segoe UI, sans-serif" font-size="10" fill="#64748B">Gross Basket: $160.20 w/ freight</text>
+
+  <!-- Card 4: Customers -->
+  <rect x="906" y="108" width="270" height="96" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <rect x="906" y="108" width="5" height="96" rx="2" fill="#F59E0B"/>
+  <text x="924" y="132" font-family="Segoe UI, sans-serif" font-size="11" fill="#64748B" font-weight="600">UNIQUE CUSTOMERS</text>
+  <text x="924" y="166" font-family="Segoe UI, sans-serif" font-size="26" fill="#0F172A" font-weight="bold">93,358</text>
+  <text x="924" y="188" font-family="Segoe UI, sans-serif" font-size="10" fill="#F59E0B" font-weight="600">3.00% Repeat Buyer Rate</text>
+
+  <!-- Chart 1: Monthly Trend -->
+  <rect x="24" y="220" width="760" height="260" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="42" y="246" font-family="Segoe UI, sans-serif" font-size="13" fill="#0F172A" font-weight="bold">Monthly Net Revenue Trend &amp; Order Trajectory</text>
+  <text x="42" y="262" font-family="Segoe UI, sans-serif" font-size="10" fill="#94A3B8">Bars: Net Revenue ($k) | Line: Delivered Order Volume</text>
+  <!-- Mock Chart Bars -->
+  <rect x="60" y="410" width="24" height="40" fill="#0078D4" rx="2"/>
+  <rect x="95" y="380" width="24" height="70" fill="#0078D4" rx="2"/>
+  <rect x="130" y="350" width="24" height="100" fill="#0078D4" rx="2"/>
+  <rect x="165" y="355" width="24" height="95" fill="#0078D4" rx="2"/>
+  <rect x="200" y="320" width="24" height="130" fill="#0078D4" rx="2"/>
+  <rect x="235" y="335" width="24" height="115" fill="#0078D4" rx="2"/>
+  <rect x="270" y="315" width="24" height="135" fill="#0078D4" rx="2"/>
+  <rect x="305" y="300" width="24" height="150" fill="#0078D4" rx="2"/>
+  <rect x="340" y="285" width="24" height="165" fill="#0078D4" rx="2"/>
+  <rect x="375" y="270" width="24" height="180" fill="#0078D4" rx="2"/>
+  <rect x="410" y="235" width="24" height="215" fill="#10B981" rx="2"/><!-- Black Friday Spike -->
+  <text x="400" y="228" font-family="Segoe UI, sans-serif" font-size="9" fill="#10B981" font-weight="bold">BF $980k</text>
+  <rect x="445" y="280" width="24" height="170" fill="#0078D4" rx="2"/>
+  <rect x="480" y="250" width="24" height="200" fill="#0078D4" rx="2"/>
+  <rect x="515" y="252" width="24" height="198" fill="#0078D4" rx="2"/>
+  <rect x="550" y="240" width="24" height="210" fill="#0078D4" rx="2"/>
+  <rect x="585" y="238" width="24" height="212" fill="#0078D4" rx="2"/>
+  <rect x="620" y="235" width="24" height="215" fill="#0078D4" rx="2"/>
+  <rect x="655" y="248" width="24" height="202" fill="#0078D4" rx="2"/>
+  <rect x="690" y="244" width="24" height="206" fill="#0078D4" rx="2"/>
+  <rect x="725" y="235" width="24" height="215" fill="#0078D4" rx="2"/>
+
+  <!-- Chart 2: Payment Donut -->
+  <rect x="808" y="220" width="368" height="260" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="826" y="246" font-family="Segoe UI, sans-serif" font-size="13" fill="#0F172A" font-weight="bold">Revenue by Payment Method</text>
+  <circle cx="940" cy="350" r="65" fill="none" stroke="#0078D4" stroke-width="28" stroke-dasharray="310 100"/>
+  <circle cx="940" cy="350" r="65" fill="none" stroke="#10B981" stroke-width="28" stroke-dasharray="80 330" stroke-dashoffset="-310"/>
+  <circle cx="940" cy="350" r="65" fill="none" stroke="#F59E0B" stroke-width="28" stroke-dasharray="18 392" stroke-dashoffset="-390"/>
+  <text x="922" y="355" font-family="Segoe UI, sans-serif" font-size="14" fill="#0F172A" font-weight="bold">75.8%</text>
+  <text x="915" y="370" font-family="Segoe UI, sans-serif" font-size="9" fill="#64748B">Credit Card</text>
+  <text x="1030" y="325" font-family="Segoe UI, sans-serif" font-size="11" fill="#0078D4" font-weight="bold">■ Credit Card (75.8%)</text>
+  <text x="1030" y="345" font-family="Segoe UI, sans-serif" font-size="11" fill="#10B981" font-weight="bold">■ Boleto Voucher (19.4%)</text>
+  <text x="1030" y="365" font-family="Segoe UI, sans-serif" font-size="11" fill="#F59E0B" font-weight="bold">■ Vouchers Split (3.8%)</text>
+  <text x="1030" y="385" font-family="Segoe UI, sans-serif" font-size="11" fill="#64748B" font-weight="bold">■ Debit Card (1.0%)</text>
+
+  <!-- Bottom Table Summary -->
+  <rect x="24" y="496" width="1152" height="155" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="42" y="522" font-family="Segoe UI, sans-serif" font-size="12" fill="#0F172A" font-weight="bold">Top Category Drivers &amp; Operational Benchmarks</text>
+  <line x1="42" y1="535" x2="1150" y2="535" stroke="#E2E8F0"/>
+  <text x="42" y="555" font-family="Segoe UI, sans-serif" font-size="11" fill="#0078D4" font-weight="bold">1. Health &amp; Beauty</text>
+  <text x="240" y="555" font-family="Segoe UI, sans-serif" font-size="11" fill="#334155">$1.26M Revenue (9.52% share) | 9,670 units | 4.18 ★</text>
+  <text x="42" y="580" font-family="Segoe UI, sans-serif" font-size="11" fill="#0078D4" font-weight="bold">2. Watches &amp; Gifts</text>
+  <text x="240" y="580" font-family="Segoe UI, sans-serif" font-size="11" fill="#334155">$1.21M Revenue (9.11% share) | High AOV: $201.14 | 4.02 ★</text>
+  <text x="42" y="605" font-family="Segoe UI, sans-serif" font-size="11" fill="#0078D4" font-weight="bold">3. Bed, Bath &amp; Table</text>
+  <text x="240" y="605" font-family="Segoe UI, sans-serif" font-size="11" fill="#334155">$1.04M Revenue (7.84% share) | Volume Leader: 11,115 units | 3.92 ★</text>
+  <text x="42" y="630" font-family="Segoe UI, sans-serif" font-size="11" fill="#0078D4" font-weight="bold">Regional Concentration:</text>
+  <text x="240" y="630" font-family="Segoe UI, sans-serif" font-size="11" fill="#334155">Top 3 states (SP 38.3%, RJ 13.3%, MG 11.7%) contribute 63.38% of platform GMV</text>
+</svg>

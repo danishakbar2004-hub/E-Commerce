@@ -1,0 +1,188 @@
+// ============================================================
+// POWER BI DAX MEASURES
+// File: 02_product_measures.dax
+// Dashboard: Product Performance Dashboard
+// ============================================================
+
+
+// ============================================================
+// SECTION 1: PRODUCT REVENUE MEASURES
+// ============================================================
+
+// Top N Products by Revenue (dynamic — works with slicer)
+Top N Products Revenue =
+VAR TopN = SELECTEDVALUE('TopN Slicer'[Value], 10)
+RETURN
+RANKX(
+    ALL(dim_products[product_name]),
+    [Total Net Revenue],
+    ,
+    DESC,
+    DENSE
+) <= TopN
+
+// Product Revenue Rank
+Product Revenue Rank =
+RANKX(
+    ALL(dim_products[product_name]),
+    [Total Net Revenue],
+    ,
+    DESC,
+    DENSE
+)
+
+// Category Revenue Share %
+Category Revenue Share % =
+DIVIDE(
+    [Total Net Revenue],
+    CALCULATE([Total Net Revenue], ALL(dim_products[category_name])),
+    0
+) * 100
+
+// Product Revenue Share % within Category
+Product Share in Category % =
+DIVIDE(
+    [Total Net Revenue],
+    CALCULATE(
+        [Total Net Revenue],
+        ALLEXCEPT(dim_products, dim_products[category_name])
+    ),
+    0
+) * 100
+
+
+// ============================================================
+// SECTION 2: PROFITABILITY MEASURES
+// ============================================================
+
+// Product Gross Profit
+Product Gross Profit =
+SUMX(
+    fact_sales,
+    fact_sales[net_profit]
+)
+
+// Product Margin %
+Product Margin % =
+DIVIDE(
+    [Product Gross Profit],
+    [Total Net Revenue],
+    0
+) * 100
+
+// Cost of Goods Sold (COGS)
+COGS =
+SUMX(
+    fact_sales,
+    fact_sales[quantity] * RELATED(dim_products[cost_price])
+)
+
+// Return on Revenue (net profit / revenue)
+Return on Revenue % =
+DIVIDE([Product Gross Profit], [Total Net Revenue], 0) * 100
+
+
+// ============================================================
+// SECTION 3: VOLUME MEASURES
+// ============================================================
+
+// Units Sold Rank
+Units Sold Rank =
+RANKX(
+    ALL(dim_products[product_name]),
+    [Total Units Sold],
+    ,
+    DESC,
+    DENSE
+)
+
+// Average Selling Price
+Avg Selling Price =
+DIVIDE(
+    SUM(fact_sales[unit_price]),
+    COUNT(fact_sales[item_id]),
+    0
+)
+
+// Revenue Per Unit
+Revenue Per Unit =
+DIVIDE(
+    [Total Net Revenue],
+    [Total Units Sold],
+    0
+)
+
+
+// ============================================================
+// SECTION 4: CATEGORY ANALYSIS
+// ============================================================
+
+// Category Gross Revenue
+Category Revenue =
+CALCULATE(
+    [Total Net Revenue],
+    ALLEXCEPT(dim_products, dim_products[category_name])
+)
+
+// Category Rank
+Category Revenue Rank =
+RANKX(
+    ALL(dim_products[category_name]),
+    [Total Net Revenue],
+    ,
+    DESC,
+    DENSE
+)
+
+// Best Performing Category (card measure)
+Best Category =
+CALCULATE(
+    FIRSTNONBLANK(dim_products[category_name], 1),
+    TOPN(1, ALL(dim_products[category_name]), [Total Net Revenue], DESC)
+)
+
+// Category MoM Growth %
+Category MoM Growth % =
+VAR CurrentRev = [Total Net Revenue]
+VAR PrevRev    = CALCULATE(
+    [Total Net Revenue],
+    PREVIOUSMONTH('dim_date'[date])
+)
+RETURN
+DIVIDE(CurrentRev - PrevRev, PrevRev, BLANK()) * 100
+
+
+// ============================================================
+// SECTION 5: INVENTORY MEASURES  (from dim_products)
+// ============================================================
+
+// Total Stock Value
+Total Stock Value =
+SUMX(
+    dim_products,
+    dim_products[stock_qty] * dim_products[unit_price]
+)
+
+// Products Below 20 Units (low stock alert)
+Low Stock Products =
+CALCULATE(
+    COUNTROWS(dim_products),
+    dim_products[stock_qty] < 20,
+    dim_products[stock_qty] > 0
+)
+
+// Out of Stock Products
+Out of Stock Products =
+CALCULATE(
+    COUNTROWS(dim_products),
+    dim_products[stock_qty] = 0
+)
+
+// Stock Turnover Rate  (units sold / avg stock)
+// Note: Approximate — requires period context
+Stock Turnover =
+DIVIDE(
+    [Total Units Sold],
+    AVERAGE(dim_products[stock_qty]),
+    0
+)

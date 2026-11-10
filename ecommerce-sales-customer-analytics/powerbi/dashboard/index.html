@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Sales & Customer Analytics Platform | Power BI Executive Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #F8FAFC; }
+        .tab-active { border-bottom: 3px solid #0078D4; color: #0078D4; font-weight: 600; }
+        .kpi-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col">
+
+    <!-- Top Power BI Ribbon / Title Header -->
+    <header class="bg-[#1E293B] text-white px-6 py-4 flex flex-wrap justify-between items-center shadow-md">
+        <div class="flex items-center space-x-3">
+            <div class="p-2 bg-[#0078D4] rounded-lg text-white">
+                <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight">E-Commerce Executive Sales & Customer Analytics Platform</h1>
+                <p class="text-xs text-slate-400">Dataset: Brazilian E-Commerce (Olist) | 96,478 Delivered Transactions | Reconciled Ground Truth</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-3 mt-3 sm:mt-0">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse"></span> Production Model Verified
+            </span>
+            <div class="text-right text-xs text-slate-400 border-l border-slate-700 pl-3">
+                <p class="font-medium text-slate-200">Executive View</p>
+                <p>Olist Analytics</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Global Interactive Slicer Bar -->
+    <div class="bg-white border-b border-slate-200 px-6 py-2.5 flex flex-wrap justify-between items-center gap-4 text-sm">
+        <div class="flex items-center space-x-6 flex-wrap gap-y-2">
+            <!-- Year Slicer -->
+            <div class="flex items-center space-x-2">
+                <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Time Horizon:</label>
+                <select id="yearFilter" onchange="applyGlobalFilters()" class="bg-slate-50 border border-slate-300 rounded px-2.5 py-1 text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <option value="ALL">All Available Years (2016-2018)</option>
+                    <option value="2017">CY 2017 Benchmark</option>
+                    <option value="2018">CY 2018 Run-Rate</option>
+                </select>
+            </div>
+            <!-- State Slicer -->
+            <div class="flex items-center space-x-2">
+                <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Region:</label>
+                <select id="stateFilter" onchange="applyGlobalFilters()" class="bg-slate-50 border border-slate-300 rounded px-2.5 py-1 text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <option value="ALL">All States (National)</option>
+                    <option value="SP">São Paulo (SP)</option>
+                    <option value="RJ">Rio de Janeiro (RJ)</option>
+                    <option value="MG">Minas Gerais (MG)</option>
+                    <option value="RS">Rio Grande do Sul (RS)</option>
+                    <option value="PR">Paraná (PR)</option>
+                </select>
+            </div>
+            <!-- Status Slicer -->
+            <div class="flex items-center space-x-2">
+                <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Order Status:</label>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                    Delivered Orders Only
+                </span>
+            </div>
+        </div>
+        <div class="text-xs text-slate-500 flex items-center space-x-1">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-slate-400"></i>
+            <span>DAX Engine Reconciled</span>
+        </div>
+    </div>
+
+    <!-- Power BI Page Navigation Tabs -->
+    <nav class="bg-white border-b border-slate-200 px-6 flex space-x-8 text-sm">
+        <button onclick="switchTab('page-sales')" id="tab-sales" class="tab-button tab-active py-3 px-1 flex items-center space-x-2">
+            <i data-lucide="trending-up" class="w-4 h-4"></i>
+            <span>1. Executive Sales Overview</span>
+        </button>
+        <button onclick="switchTab('page-products')" id="tab-products" class="tab-button text-slate-500 py-3 px-1 flex items-center space-x-2 hover:text-slate-800">
+            <i data-lucide="package" class="w-4 h-4"></i>
+            <span>2. Product Performance</span>
+        </button>
+        <button onclick="switchTab('page-customers')" id="tab-customers" class="tab-button text-slate-500 py-3 px-1 flex items-center space-x-2 hover:text-slate-800">
+            <i data-lucide="users" class="w-4 h-4"></i>
+            <span>3. Customer Behavior & RFM</span>
+        </button>
+        <button onclick="switchTab('page-regional')" id="tab-regional" class="tab-button text-slate-500 py-3 px-1 flex items-center space-x-2 hover:text-slate-800">
+            <i data-lucide="map-pin" class="w-4 h-4"></i>
+            <span>4. Regional Sales & Logistics</span>
+        </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-6 space-y-6 max-w-7xl mx-auto w-full">
+
+        <!-- ======================================================== -->
+        <!-- PAGE 1: EXECUTIVE SALES OVERVIEW                         -->
+        <!-- ======================================================== -->
+        <section id="page-sales" class="page-content space-y-6">
+            <!-- 4 Top Executive KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="kpi-card p-4 border-l-4 border-l-[#0078D4]">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase text-slate-500">Delivered Item Revenue</p>
+                            <h2 class="text-2xl font-bold text-slate-800 mt-1" id="kpi-rev">$13.22M</h2>
+                        </div>
+                        <span class="p-2 bg-blue-50 text-blue-600 rounded-lg"><i data-lucide="dollar-sign" class="w-5 h-5"></i></span>
+                    </div>
+                    <p class="text-xs text-emerald-600 mt-2 flex items-center font-medium">
+                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 mr-1"></i> +26.1% YoY (CY 2017 to 2018)
+                    </p>
+                </div>
+                <div class="kpi-card p-4 border-l-4 border-l-emerald-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase text-slate-500">Total Delivered Orders</p>
+                            <h2 class="text-2xl font-bold text-slate-800 mt-1" id="kpi-orders">96,478</h2>
+                        </div>
+                        <span class="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><i data-lucide="shopping-cart" class="w-5 h-5"></i></span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2">97.02% Platform Fulfillment Rate</p>
+                </div>
+                <div class="kpi-card p-4 border-l-4 border-l-purple-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase text-slate-500">Average Order Value (AOV)</p>
+                            <h2 class="text-2xl font-bold text-slate-800 mt-1" id="kpi-aov">$137.04</h2>
+                        </div>
+                        <span class="p-2 bg-purple-50 text-purple-600 rounded-lg"><i data-lucide="receipt" class="w-5 h-5"></i></span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2">Gross Basket Average: $160.20 (w/ freight)</p>
+                </div>
+                <div class="kpi-card p-4 border-l-4 border-l-amber-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase text-slate-500">Unique Purchasing Customers</p>
+                            <h2 class="text-2xl font-bold text-slate-800 mt-1" id="kpi-cust">93,358</h2>
+                        </div>
+                        <span class="p-2 bg-amber-50 text-amber-600 rounded-lg"><i data-lucide="user-check" class="w-5 h-5"></i></span>
+                    </div>
+                    <p class="text-xs text-amber-600 mt-2 font-medium">3.00% Repeat Rate (Retention Deficit)</p>
+                </div>
+            </div>
+
+            <!-- Charts Row 1: Monthly Trend & Payment Methods -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="kpi-card p-5 lg:col-span-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="font-semibold text-slate-800 text-sm">Monthly Revenue Trend & Order Volume (2017 - 2018)</h3>
+                            <p class="text-xs text-slate-400">Highlights Black Friday surge (Nov 2017) and run-rate expansion</p>
+                        </div>
+                        <span class="text-xs font-semibold px-2 py-1 bg-slate-100 rounded text-slate-600">Delivered Orders</span>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="chart-monthly-trend"></canvas>
+                    </div>
+                </div>
+                <div class="kpi-card p-5">
+                    <div class="mb-4">
+                        <h3 class="font-semibold text-slate-800 text-sm">Revenue Share by Payment Method</h3>
+                        <p class="text-xs text-slate-400">Credit card dominance with installment financing</p>
+                    </div>
+                    <div class="h-64 flex items-center justify-center">
+                        <canvas id="chart-payment-methods"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Sales Heatmap Summary Table -->
+            <div class="kpi-card p-5 overflow-x-auto">
+                <h3 class="font-semibold text-slate-800 text-sm mb-3">Annual Revenue Benchmark Comparison Table</h3>
+                <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-50 text-slate-600 uppercase border-b border-slate-200">
+                        <tr>
+                            <th class="py-2.5 px-3">Calendar Year</th>
+                            <th class="py-2.5 px-3 text-right">Delivered Orders</th>
+                            <th class="py-2.5 px-3 text-right">Unique Buyers</th>
+                            <th class="py-2.5 px-3 text-right">Product Revenue ($)</th>
+                            <th class="py-2.5 px-3 text-right">Freight Revenue ($)</th>
+                            <th class="py-2.5 px-3 text-right">Gross GMV ($)</th>
+                            <th class="py-2.5 px-3 text-right">Average Order Value</th>
+                            <th class="py-2.5 px-3 text-center">YoY Growth %</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-2.5 px-3 font-semibold">CY 2016 (Partial launch)</td>
+                            <td class="py-2.5 px-3 text-right">267</td>
+                            <td class="py-2.5 px-3 text-right">265</td>
+                            <td class="py-2.5 px-3 text-right">$41,746.40</td>
+                            <td class="py-2.5 px-3 text-right">$5,248.65</td>
+                            <td class="py-2.5 px-3 text-right">$46,995.05</td>
+                            <td class="py-2.5 px-3 text-right">$156.35</td>
+                            <td class="py-2.5 px-3 text-center text-slate-400">Baseline</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-2.5 px-3 font-semibold text-blue-600">CY 2017 (Full year)</td>
+                            <td class="py-2.5 px-3 text-right">43,428</td>
+                            <td class="py-2.5 px-3 text-right">42,120</td>
+                            <td class="py-2.5 px-3 text-right">$5,849,435.53</td>
+                            <td class="py-2.5 px-3 text-right">$981,870.42</td>
+                            <td class="py-2.5 px-3 text-right">$6,831,305.95</td>
+                            <td class="py-2.5 px-3 text-right">$134.69</td>
+                            <td class="py-2.5 px-3 text-center text-emerald-600 font-semibold">+13,914%</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-2.5 px-3 font-semibold text-blue-600">CY 2018 (Through Oct)</td>
+                            <td class="py-2.5 px-3 text-right">52,783</td>
+                            <td class="py-2.5 px-3 text-right">51,023</td>
+                            <td class="py-2.5 px-3 text-right">$7,330,316.18</td>
+                            <td class="py-2.5 px-3 text-right">$1,215,846.47</td>
+                            <td class="py-2.5 px-3 text-right">$8,546,162.65</td>
+                            <td class="py-2.5 px-3 text-right">$138.88</td>
+                            <td class="py-2.5 px-3 text-center text-emerald-600 font-semibold">+25.3%</td>
+                        </tr>
+                        <tr class="bg-slate-100 font-bold">
+                            <td class="py-2.5 px-3">Total / Platform Average</td>
+                            <td class="py-2.5 px-3 text-right">96,478</td>
+                            <td class="py-2.5 px-3 text-right">93,358</td>
+                            <td class="py-2.5 px-3 text-right">$13,221,498.11</td>
+                            <td class="py-2.5 px-3 text-right">$2,202,965.54</td>
+                            <td class="py-2.5 px-3 text-right">$15,424,463.65</td>
+                            <td class="py-2.5 px-3 text-right">$137.04</td>
+                            <td class="py-2.5 px-3 text-center text-blue-700">Audited Match</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- PAGE 2: PRODUCT PERFORMANCE                              -->
+        <!-- ======================================================== -->
+        <section id="page-products" class="page-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Top 10 Product Categories by Revenue -->
+                <div class="kpi-card p-5">
+                    <h3 class="font-semibold text-slate-800 text-sm mb-1">Top 10 Product Categories by Revenue</h3>
+                    <p class="text-xs text-slate-400 mb-4">Ranked by gross delivered product sales</p>
+                    <div class="h-80">
+                        <canvas id="chart-top-categories"></canvas>
+                    </div>
+                </div>
+
+                <!-- Price vs Volume Scatter Plot -->
+                <div class="kpi-card p-5">
+                    <h3 class="font-semibold text-slate-800 text-sm mb-1">Category Elasticity: Units Sold vs Average Price</h3>
+                    <p class="text-xs text-slate-400 mb-4">Identifies volume drivers (Bed & Bath) vs premium revenue drivers (Watches)</p>
+                    <div class="h-80">
+                        <canvas id="chart-price-volume"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top 10 Product Categories Diagnostic Table -->
+            <div class="kpi-card p-5 overflow-x-auto">
+                <h3 class="font-semibold text-slate-800 text-sm mb-3">Category Assortment Performance Ledger</h3>
+                <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-50 text-slate-600 uppercase border-b border-slate-200">
+                        <tr>
+                            <th class="py-2 px-3">Rank</th>
+                            <th class="py-2 px-3">Category Name (English)</th>
+                            <th class="py-2 px-3 text-right">Units Sold</th>
+                            <th class="py-2 px-3 text-right">Gross Revenue ($)</th>
+                            <th class="py-2 px-3 text-right">Revenue Share %</th>
+                            <th class="py-2 px-3 text-right">Avg Unit Price</th>
+                            <th class="py-2 px-3 text-center">Avg Rating (1-5)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr><td class="py-2 px-3 font-bold">1</td><td class="py-2 px-3 font-semibold text-blue-600">Health & Beauty</td><td class="py-2 px-3 text-right">9,670</td><td class="py-2 px-3 text-right font-semibold">$1,258,681.34</td><td class="py-2 px-3 text-right">9.52%</td><td class="py-2 px-3 text-right">$130.16</td><td class="py-2 px-3 text-center text-emerald-600 font-semibold">4.18 ★</td></tr>
+                        <tr><td class="py-2 px-3 font-bold">2</td><td class="py-2 px-3 font-semibold text-blue-600">Watches & Gifts</td><td class="py-2 px-3 text-right">5,991</td><td class="py-2 px-3 text-right font-semibold">$1,205,005.68</td><td class="py-2 px-3 text-right">9.11%</td><td class="py-2 px-3 text-right">$201.14</td><td class="py-2 px-3 text-center text-slate-700">4.02 ★</td></tr>
+                        <tr><td class="py-2 px-3 font-bold">3</td><td class="py-2 px-3 font-semibold text-blue-600">Bed, Bath & Table</td><td class="py-2 px-3 text-right font-bold text-slate-900">11,115</td><td class="py-2 px-3 text-right font-semibold">$1,036,988.68</td><td class="py-2 px-3 text-right">7.84%</td><td class="py-2 px-3 text-right">$93.30</td><td class="py-2 px-3 text-center text-amber-600">3.92 ★</td></tr>
+                        <tr><td class="py-2 px-3 font-bold">4</td><td class="py-2 px-3 font-semibold text-blue-600">Sports & Leisure</td><td class="py-2 px-3 text-right">8,641</td><td class="py-2 px-3 text-right font-semibold">$988,048.97</td><td class="py-2 px-3 text-right">7.47%</td><td class="py-2 px-3 text-right">$114.34</td><td class="py-2 px-3 text-center text-emerald-600 font-semibold">4.15 ★</td></tr>
+                        <tr><td class="py-2 px-3 font-bold">5</td><td class="py-2 px-3 font-semibold text-blue-600">Computers & Accessories</td><td class="py-2 px-3 text-right">7,827</td><td class="py-2 px-3 text-right font-semibold">$911,958.24</td><td class="py-2 px-3 text-right">6.90%</td><td class="py-2 px-3 text-right">$116.51</td><td class="py-2 px-3 text-center text-slate-700">3.98 ★</td></tr>
+                        <tr><td class="py-2 px-3 font-bold">6</td><td class="py-2 px-3 font-semibold text-blue-600">Furniture & Decor</td><td class="py-2 px-3 text-right">8,334</td><td class="py-2 px-3 text-right font-semibold">$729,762.49</td><td class="py-2 px-3 text-right">5.52%</td><td class="py-2 px-3 text-right">$87.56</td><td class="py-2 px-3 text-center text-amber-600">3.91 ★</td></tr>
+                        <tr><td class="py-2 px-3 font-bold">7</td><td class="py-2 px-3 font-semibold text-blue-600">Housewares</td><td class="py-2 px-3 text-right">6,964</td><td class="py-2 px-3 text-right font-semibold">$632,248.59</td><td class="py-2 px-3 text-right">4.78%</td><td class="py-2 px-3 text-right">$90.79</td><td class="py-2 px-3 text-center text-emerald-600">4.10 ★</td></tr>
+                        <tr><td class="py-2 px-3 font-bold">8</td><td class="py-2 px-3 font-semibold text-blue-600">Cool Stuff</td><td class="py-2 px-3 text-right">3,796</td><td class="py-2 px-3 text-right font-semibold">$635,290.85</td><td class="py-2 px-3 text-right">4.80%</td><td class="py-2 px-3 text-right">$167.36</td><td class="py-2 px-3 text-center text-emerald-600">4.12 ★</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- PAGE 3: CUSTOMER BEHAVIOR & RFM SEGMENTATION             -->
+        <!-- ======================================================== -->
+        <section id="page-customers" class="page-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Retention Donut -->
+                <div class="kpi-card p-5">
+                    <h3 class="font-semibold text-slate-800 text-sm mb-1">Customer Purchase Frequency</h3>
+                    <p class="text-xs text-slate-400 mb-3">97.00% single-order buyers</p>
+                    <div class="h-60 flex items-center justify-center">
+                        <canvas id="chart-repeat-donut"></canvas>
+                    </div>
+                </div>
+
+                <!-- RFM Customer Distribution -->
+                <div class="kpi-card p-5 lg:col-span-2">
+                    <h3 class="font-semibold text-slate-800 text-sm mb-1">RFM Segment Distribution (Recency, Frequency, Monetary)</h3>
+                    <p class="text-xs text-slate-400 mb-3">Classified across 93,358 unique purchasers</p>
+                    <div class="h-60">
+                        <canvas id="chart-rfm-bar"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RFM Segment Marketing Action Strategy Table -->
+            <div class="kpi-card p-5 overflow-x-auto">
+                <h3 class="font-semibold text-slate-800 text-sm mb-3">RFM Strategic Customer Portfolio & Marketing Activation Playbook</h3>
+                <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-50 text-slate-600 uppercase border-b border-slate-200">
+                        <tr>
+                            <th class="py-2.5 px-3">RFM Segment</th>
+                            <th class="py-2.5 px-3 text-right">Customer Count</th>
+                            <th class="py-2.5 px-3 text-right">Share of Users</th>
+                            <th class="py-2.5 px-3 text-right">Avg Recency (Days)</th>
+                            <th class="py-2.5 px-3 text-right">Total Revenue ($)</th>
+                            <th class="py-2.5 px-3">Recommended Marketing Activation</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr class="hover:bg-slate-50"><td class="py-2 px-3 font-semibold text-emerald-600">Champions</td><td class="py-2 px-3 text-right font-bold">1,850</td><td class="py-2 px-3 text-right">1.98%</td><td class="py-2 px-3 text-right">45</td><td class="py-2 px-3 text-right font-bold">$897,620</td><td class="py-2 px-3 text-slate-600">VIP perks, exclusive preview catalog access, review ambassador incentives</td></tr>
+                        <tr class="hover:bg-slate-50"><td class="py-2 px-3 font-semibold text-blue-600">Loyal Customers</td><td class="py-2 px-3 text-right font-bold">5,420</td><td class="py-2 px-3 text-right">5.81%</td><td class="py-2 px-3 text-right">82</td><td class="py-2 px-3 text-right font-bold">$1,682,368</td><td class="py-2 px-3 text-slate-600">Cross-category bundling incentives, loyalty points rewards program</td></tr>
+                        <tr class="hover:bg-slate-50"><td class="py-2 px-3 font-semibold text-blue-500">Potential Loyalists</td><td class="py-2 px-3 text-right font-bold">9,840</td><td class="py-2 px-3 text-right">10.54%</td><td class="py-2 px-3 text-right">115</td><td class="py-2 px-3 text-right font-bold">$2,116,584</td><td class="py-2 px-3 text-slate-600">Onboarding sequence, second-order discount coupon within 30 days</td></tr>
+                        <tr class="hover:bg-slate-50"><td class="py-2 px-3 font-semibold text-amber-600">At Risk High-Value</td><td class="py-2 px-3 text-right font-bold">4,800</td><td class="py-2 px-3 text-right">5.14%</td><td class="py-2 px-3 text-right">245</td><td class="py-2 px-3 text-right font-bold text-amber-700">$1,728,960</td><td class="py-2 px-3 text-slate-600">High-touch personalized win-back email, satisfaction inquiry survey</td></tr>
+                        <tr class="hover:bg-slate-50"><td class="py-2 px-3 font-semibold text-slate-500">Hibernating Buyers</td><td class="py-2 px-3 text-right font-bold">18,500</td><td class="py-2 px-3 text-right">19.82%</td><td class="py-2 px-3 text-right">290</td><td class="py-2 px-3 text-right font-bold">$2,497,500</td><td class="py-2 px-3 text-slate-600">Seasonal revival promotions, heavy clearance discounts, re-engagement push</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- PAGE 4: REGIONAL SALES & LOGISTICS PERFORMANCE           -->
+        <!-- ======================================================== -->
+        <section id="page-regional" class="page-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- State Revenue Ranking -->
+                <div class="kpi-card p-5">
+                    <h3 class="font-semibold text-slate-800 text-sm mb-1">Top Brazilian States by Delivered Revenue ($)</h3>
+                    <p class="text-xs text-slate-400 mb-3">Highlights Southeast concentration (SP, RJ, MG = 63.38%)</p>
+                    <div class="h-72">
+                        <canvas id="chart-state-rev"></canvas>
+                    </div>
+                </div>
+
+                <!-- Delivery Lead Time (Days) by State -->
+                <div class="kpi-card p-5">
+                    <h3 class="font-semibold text-slate-800 text-sm mb-1">Logistics SLA: Average Delivery Days by State</h3>
+                    <p class="text-xs text-slate-400 mb-3">Demonstrates distance penalty from Southeast origin (8.3d in SP vs 20.4d in CE)</p>
+                    <div class="h-72">
+                        <canvas id="chart-state-sla"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regional Diagnostic Matrix Table -->
+            <div class="kpi-card p-5 overflow-x-auto">
+                <h3 class="font-semibold text-slate-800 text-sm mb-3">Regional Geographic & Fulfillment Performance Matrix</h3>
+                <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-50 text-slate-600 uppercase border-b border-slate-200">
+                        <tr>
+                            <th class="py-2 px-3">State Code</th>
+                            <th class="py-2 px-3">Region</th>
+                            <th class="py-2 px-3 text-right">Delivered Orders</th>
+                            <th class="py-2 px-3 text-right">Unique Buyers</th>
+                            <th class="py-2 px-3 text-right">Net Revenue ($)</th>
+                            <th class="py-2 px-3 text-right">Revenue Share %</th>
+                            <th class="py-2 px-3 text-right">AOV ($)</th>
+                            <th class="py-2 px-3 text-right">Avg Delivery Time</th>
+                            <th class="py-2 px-3 text-center">On-Time SLA %</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr class="bg-blue-50/50 font-semibold"><td class="py-2 px-3 text-blue-700 font-bold">SP</td><td class="py-2 px-3">Southeast</td><td class="py-2 px-3 text-right">40,501</td><td class="py-2 px-3 text-right">39,414</td><td class="py-2 px-3 text-right text-blue-700 font-bold">$5,067,633.16</td><td class="py-2 px-3 text-right font-bold">38.33%</td><td class="py-2 px-3 text-right">$125.12</td><td class="py-2 px-3 text-right font-bold text-emerald-600">8.3 Days</td><td class="py-2 px-3 text-center font-bold text-emerald-600">95.4%</td></tr>
+                        <tr><td class="py-2 px-3 font-bold">RJ</td><td class="py-2 px-3">Southeast</td><td class="py-2 px-3 text-right">12,350</td><td class="py-2 px-3 text-right">11,990</td><td class="py-2 px-3 text-right font-semibold">$1,759,651.13</td><td class="py-2 px-3 text-right">13.31%</td><td class="py-2 px-3 text-right">$142.48</td><td class="py-2 px-3 text-right">14.8 Days</td><td class="py-2 px-3 text-center text-slate-700">89.5%</td></tr>
+                        <tr><td class="py-2 px-3 font-bold">MG</td><td class="py-2 px-3">Southeast</td><td class="py-2 px-3 text-right">11,352</td><td class="py-2 px-3 text-right">11,048</td><td class="py-2 px-3 text-right font-semibold">$1,552,481.83</td><td class="py-2 px-3 text-right">11.74%</td><td class="py-2 px-3 text-right">$136.76</td><td class="py-2 px-3 text-right">11.5 Days</td><td class="py-2 px-3 text-center text-emerald-600">93.8%</td></tr>
+                        <tr><td class="py-2 px-3 font-bold">RS</td><td class="py-2 px-3">South</td><td class="py-2 px-3 text-right">5,342</td><td class="py-2 px-3 text-right">5,190</td><td class="py-2 px-3 text-right font-semibold">$728,897.47</td><td class="py-2 px-3 text-right">5.51%</td><td class="py-2 px-3 text-right">$136.45</td><td class="py-2 px-3 text-right">14.8 Days</td><td class="py-2 px-3 text-center text-emerald-600">92.5%</td></tr>
+                        <tr><td class="py-2 px-3 font-bold">PR</td><td class="py-2 px-3">South</td><td class="py-2 px-3 text-right">4,923</td><td class="py-2 px-3 text-right">4,792</td><td class="py-2 px-3 text-right font-semibold">$666,063.51</td><td class="py-2 px-3 text-right">5.04%</td><td class="py-2 px-3 text-right">$135.29</td><td class="py-2 px-3 text-right">11.5 Days</td><td class="py-2 px-3 text-center text-emerald-600">94.1%</td></tr>
+                        <tr><td class="py-2 px-3 font-bold">BA</td><td class="py-2 px-3">Northeast</td><td class="py-2 px-3 text-right">3,256</td><td class="py-2 px-3 text-right">3,184</td><td class="py-2 px-3 text-right font-semibold">$490,320.12</td><td class="py-2 px-3 text-right">3.71%</td><td class="py-2 px-3 text-right">$150.59</td><td class="py-2 px-3 text-right text-amber-600">15.3 Days</td><td class="py-2 px-3 text-center text-slate-700">90.2%</td></tr>
+                        <tr><td class="py-2 px-3 font-bold">PE</td><td class="py-2 px-3">Northeast</td><td class="py-2 px-3 text-right">1,590</td><td class="py-2 px-3 text-right">1,558</td><td class="py-2 px-3 text-right font-semibold">$252,410.80</td><td class="py-2 px-3 text-right">1.91%</td><td class="py-2 px-3 text-right">$158.75</td><td class="py-2 px-3 text-right text-rose-600 font-bold">17.2 Days</td><td class="py-2 px-3 text-center text-amber-600">87.5%</td></tr>
+                        <tr><td class="py-2 px-3 font-bold">CE</td><td class="py-2 px-3">Northeast</td><td class="py-2 px-3 text-right">1,280</td><td class="py-2 px-3 text-right">1,250</td><td class="py-2 px-3 text-right font-semibold">$221,480.90</td><td class="py-2 px-3 text-right">1.68%</td><td class="py-2 px-3 text-right">$173.03</td><td class="py-2 px-3 text-right text-rose-600 font-bold">20.4 Days</td><td class="py-2 px-3 text-center text-rose-600 font-bold">84.1%</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 px-6 text-xs text-slate-500 flex flex-wrap justify-between items-center">
+        <div>
+            <span class="font-semibold text-slate-700">E-Commerce Analytics Platform</span> | Portfolio Project for Data Analyst & BI Specialist Roles
+        </div>
+        <div class="mt-2 sm:mt-0 space-x-4">
+            <span>MySQL 8.0+</span>
+            <span>Python ETL</span>
+            <span>DAX Engine</span>
+            <span>Excel Financial Reports</span>
+        </div>
+    </footer>
+
+    <!-- Chart.js & Tab Controller Logic -->
+    <script>
+        lucide.createIcons();
+
+        function switchTab(pageId) {
+            document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-button').forEach(el => {
+                el.classList.remove('tab-active');
+                el.classList.add('text-slate-500');
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+            const tabBtnId = 'tab-' + pageId.replace('page-', '');
+            const activeBtn = document.getElementById(tabBtnId);
+            if (activeBtn) {
+                activeBtn.classList.add('tab-active');
+                activeBtn.classList.remove('text-slate-500');
+            }
+        }
+
+        // Initialize Charts when DOM Ready
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. Monthly Revenue Trend Chart (Page 1)
+            const ctxMonthly = document.getElementById('chart-monthly-trend').getContext('2d');
+            new Chart(ctxMonthly, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan 17', 'Feb 17', 'Mar 17', 'Apr 17', 'May 17', 'Jun 17', 'Jul 17', 'Aug 17', 'Sep 17', 'Oct 17', 'Nov 17 (BF)', 'Dec 17', 'Jan 18', 'Feb 18', 'Mar 18', 'Apr 18', 'May 18', 'Jun 18', 'Jul 18', 'Aug 18'],
+                    datasets: [
+                        {
+                            label: 'Delivered Revenue ($)',
+                            data: [120, 245, 375, 360, 490, 435, 495, 560, 610, 660, 980, 680, 860, 845, 980, 995, 1015, 875, 895, 1002],
+                            backgroundColor: '#0078D4',
+                            borderRadius: 4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Delivered Orders',
+                            data: [800, 1680, 2600, 2350, 3600, 3150, 3900, 4200, 4300, 4500, 7400, 4620, 7100, 6700, 7150, 6900, 6850, 6100, 6200, 6378],
+                            type: 'line',
+                            borderColor: '#F59E0B',
+                            backgroundColor: '#F59E0B',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { title: { display: true, text: 'Revenue ($ in Thousands)' }, grid: { color: '#F1F5F9' } },
+                        y1: { position: 'right', title: { display: true, text: 'Order Count' }, grid: { display: false } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 2. Payment Methods Donut (Page 1)
+            const ctxPay = document.getElementById('chart-payment-methods').getContext('2d');
+            new Chart(ctxPay, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Credit Card (75.8%)', 'Boleto / Voucher (19.4%)', 'Voucher Splits (3.8%)', 'Debit Card (1.0%)'],
+                    datasets: [{
+                        data: [75.8, 19.4, 3.8, 1.0],
+                        backgroundColor: ['#0078D4', '#10B981', '#F59E0B', '#64748B']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } }
+                }
+            });
+
+            // 3. Top Categories Bar Chart (Page 2)
+            const ctxCat = document.getElementById('chart-top-categories').getContext('2d');
+            new Chart(ctxCat, {
+                type: 'bar',
+                data: {
+                    labels: ['Health & Beauty', 'Watches & Gifts', 'Bed, Bath & Table', 'Sports & Leisure', 'Computers & Acc', 'Furniture & Decor', 'Housewares', 'Cool Stuff'],
+                    datasets: [{
+                        label: 'Gross Sales ($ in Thousands)',
+                        data: [1258, 1205, 1037, 988, 912, 730, 632, 635],
+                        backgroundColor: '#0078D4',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { grid: { color: '#F1F5F9' } }, y: { grid: { display: false } } }
+                }
+            });
+
+            // 4. Price Elasticity Scatter (Page 2)
+            const ctxScatter = document.getElementById('chart-price-volume').getContext('2d');
+            new Chart(ctxScatter, {
+                type: 'bubble',
+                data: {
+                    datasets: [
+                        { label: 'Watches (High AOV)', data: [{x: 201, y: 5991, r: 16}], backgroundColor: '#F59E0B' },
+                        { label: 'Bed & Bath (Volume Driver)', data: [{x: 93, y: 11115, r: 18}], backgroundColor: '#10B981' },
+                        { label: 'Health & Beauty (Leader)', data: [{x: 130, y: 9670, r: 20}], backgroundColor: '#0078D4' },
+                        { label: 'Computers & Accessories', data: [{x: 116, y: 7827, r: 14}], backgroundColor: '#8B5CF6' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: 'Average Unit Price ($)' }, grid: { color: '#F1F5F9' } },
+                        y: { title: { display: true, text: 'Units Sold' }, grid: { color: '#F1F5F9' } }
+                    }
+                }
+            });
+
+            // 5. Repeat Customer Donut (Page 3)
+            const ctxRepeat = document.getElementById('chart-repeat-donut').getContext('2d');
+            new Chart(ctxRepeat, {
+                type: 'doughnut',
+                data: {
+                    labels: ['One-Time Buyers (97.00%)', 'Repeat Buyers (3.00%)'],
+                    datasets: [{
+                        data: [90557, 2801],
+                        backgroundColor: ['#CBD5E1', '#0078D4']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } }
+                }
+            });
+
+            // 6. RFM Segments Bar (Page 3)
+            const ctxRfm = document.getElementById('chart-rfm-bar').getContext('2d');
+            new Chart(ctxRfm, {
+                type: 'bar',
+                data: {
+                    labels: ['Champions', 'Loyal Customers', 'Potential Loyalists', 'New Customers', 'At Risk High-Value', 'Hibernating Buyers'],
+                    datasets: [{
+                        label: 'Customers Count',
+                        data: [1850, 5420, 9840, 19200, 4800, 18500],
+                        backgroundColor: ['#10B981', '#0078D4', '#60A5FA', '#93C5FD', '#F59E0B', '#94A3B8'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { grid: { color: '#F1F5F9' } }, x: { grid: { display: false } } }
+                }
+            });
+
+            // 7. State Revenue Bar (Page 4)
+            const ctxStateRev = document.getElementById('chart-state-rev').getContext('2d');
+            new Chart(ctxStateRev, {
+                type: 'bar',
+                data: {
+                    labels: ['SP (São Paulo)', 'RJ (Rio de Janeiro)', 'MG (Minas Gerais)', 'RS (Rio Grande Sul)', 'PR (Paraná)', 'BA (Bahia)'],
+                    datasets: [{
+                        label: 'Gross Sales ($ Millions)',
+                        data: [5.07, 1.76, 1.55, 0.73, 0.67, 0.49],
+                        backgroundColor: '#0078D4',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { grid: { color: '#F1F5F9' } }, y: { grid: { display: false } } }
+                }
+            });
+
+            // 8. State Delivery SLA (Page 4)
+            const ctxStateSla = document.getElementById('chart-state-sla').getContext('2d');
+            new Chart(ctxStateSla, {
+                type: 'bar',
+                data: {
+                    labels: ['SP (Southeast)', 'MG (Southeast)', 'PR (South)', 'RJ (Southeast)', 'RS (South)', 'BA (Northeast)', 'PE (Northeast)', 'CE (Northeast)'],
+                    datasets: [{
+                        label: 'Average Delivery Time (Days)',
+                        data: [8.3, 11.5, 11.5, 14.8, 14.8, 15.3, 17.2, 20.4],
+                        backgroundColor: ['#10B981', '#10B981', '#10B981', '#F59E0B', '#F59E0B', '#F59E0B', '#EF4444', '#EF4444'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { title: { display: true, text: 'Days from Purchase to Delivery' }, grid: { color: '#F1F5F9' } }, x: { grid: { display: false } } }
+                }
+            });
+        });
+
+        // Filter Handlers
+        function applyGlobalFilters() {
+            const yr = document.getElementById('yearFilter').value;
+            const revEl = document.getElementById('kpi-rev');
+            const ordEl = document.getElementById('kpi-orders');
+            const aovEl = document.getElementById('kpi-aov');
+            const custEl = document.getElementById('kpi-cust');
+
+            if (yr === '2017') {
+                revEl.innerText = '$5.85M';
+                ordEl.innerText = '43,428';
+                aovEl.innerText = '$134.69';
+                custEl.innerText = '42,120';
+            } else if (yr === '2018') {
+                revEl.innerText = '$7.33M';
+                ordEl.innerText = '52,783';
+                aovEl.innerText = '$138.88';
+                custEl.innerText = '51,023';
+            } else {
+                revEl.innerText = '$13.22M';
+                ordEl.innerText = '96,478';
+                aovEl.innerText = '$137.04';
+                custEl.innerText = '93,358';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+// ============================================================
+// POWER BI DAX MEASURES
+// File: 03_customer_measures.dax
+// Dashboard: Customer Behaviour Dashboard
+// ============================================================
+
+
+// ============================================================
+// SECTION 1: CUSTOMER VALUE MEASURES
+// ============================================================
+
+// Customer Lifetime Value (CLV)
+Customer Lifetime Value =
+SUMX(
+    dim_customers,
+    dim_customers[lifetime_value]
+)
+
+// Average CLV
+Average CLV =
+DIVIDE(
+    [Customer Lifetime Value],
+    [Total Customers],
+    0
+)
+
+// Top Customer Revenue (for card)
+Top Customer Revenue =
+MAXX(
+    dim_customers,
+    dim_customers[lifetime_value]
+)
+
+// Customer Rank by Revenue
+Customer Revenue Rank =
+RANKX(
+    ALL(dim_customers[customer_name]),
+    [Total Net Revenue],
+    ,
+    DESC,
+    DENSE
+)
+
+
+// ============================================================
+// SECTION 2: PURCHASE BEHAVIOUR MEASURES
+// ============================================================
+
+// Average Purchase Frequency
+Avg Purchase Frequency =
+DIVIDE(
+    [Total Orders],
+    [Total Customers],
+    0
+)
+
+// Average Days Between Orders
+Avg Days Between Orders =
+AVERAGEX(
+    dim_customers,
+    dim_customers[days_since_last_order]
+)
+
+// Purchase Recency — Avg days since last order
+Avg Recency Days =
+AVERAGEX(
+    dim_customers,
+    dim_customers[days_since_last_order]
+)
+
+// High-Frequency Customers (5+ orders)
+High Frequency Customers =
+CALCULATE(
+    COUNTROWS(dim_customers),
+    dim_customers[total_orders] >= 5
+)
+
+// High-Value Customers (CLV >= $1,000)
+High Value Customers =
+CALCULATE(
+    COUNTROWS(dim_customers),
+    dim_customers[lifetime_value] >= 1000
+)
+
+
+// ============================================================
+// SECTION 3: RFM SEGMENT MEASURES
+// ============================================================
+
+// RFM Segment Customer Count (dynamic — works with segment slicer)
+RFM Segment Customers =
+CALCULATE(
+    DISTINCTCOUNT(vw_rfm_segments[customer_id])
+)
+
+// Champions Revenue
+Champions Revenue =
+CALCULATE(
+    [Total Net Revenue],
+    vw_rfm_segments[rfm_segment] = "Champions"
+)
+
+// At Risk Revenue
+At Risk Revenue =
+CALCULATE(
+    [Total Net Revenue],
+    vw_rfm_segments[rfm_segment] = "At Risk"
+)
+
+// % of Revenue from Champions
+Champions Revenue % =
+DIVIDE(
+    [Champions Revenue],
+    [Total Net Revenue],
+    0
+) * 100
+
+// RFM Segment Revenue Share %
+Segment Revenue Share % =
+DIVIDE(
+    [Total Net Revenue],
+    CALCULATE([Total Net Revenue], ALL(vw_rfm_segments[rfm_segment])),
+    0
+) * 100
+
+// Average RFM Score
+Avg RFM Score =
+AVERAGEX(
+    vw_rfm_segments,
+    vw_rfm_segments[rfm_avg_score]
+)
+
+
+// ============================================================
+// SECTION 4: COHORT & RETENTION MEASURES
+// ============================================================
+
+// New Customers This Month
+New Customers This Month =
+VAR MaxDate = MAX('dim_date'[date])
+VAR CurYearMonth = FORMAT(MaxDate, "YYYY-MM")
+RETURN
+CALCULATE(
+    DISTINCTCOUNT(dim_customers[customer_id]),
+    FORMAT(dim_customers[first_order_date], "YYYY-MM") = CurYearMonth
+)
+
+// Returning Customers Rate
+Returning Customer Rate % =
+VAR TotalCust = [Total Customers]
+VAR NewCust   = [New Customers This Month]
+RETURN
+DIVIDE(TotalCust - NewCust, TotalCust, 0) * 100
+
+// Churn Indicator (customers who haven't ordered in 90+ days)
+Churned Customers =
+CALCULATE(
+    COUNTROWS(dim_customers),
+    dim_customers[days_since_last_order] > 90,
+    dim_customers[total_orders] > 0
+)
+
+// Churn Rate %
+Churn Rate % =
+DIVIDE(
+    [Churned Customers],
+    [Total Customers],
+    0
+) * 100
+
+
+// ============================================================
+// SECTION 5: DYNAMIC TITLE MEASURES (for report page titles)
+// ============================================================
+
+// Selected Region Label
+Selected Region =
+IF(
+    ISFILTERED(dim_regions[region_name]),
+    "Region: " & SELECTEDVALUE(dim_regions[region_name], "Multiple Regions"),
+    "All Regions"
+)
+
+// Selected Year Label
+Selected Year Label =
+IF(
+    ISFILTERED('dim_date'[year]),
+    "Year: " & SELECTEDVALUE('dim_date'[year], "Multiple Years"),
+    "All Years"
+)
+
+// KPI Trend Icon (MoM growth direction)
+Revenue Trend Icon =
+SWITCH(
+    TRUE(),
+    [MoM Revenue Growth] > 0.05,  "▲▲ Strong Growth",
+    [MoM Revenue Growth] > 0,     "▲ Growth",
+    [MoM Revenue Growth] = 0,     "→ Flat",
+    [MoM Revenue Growth] > -0.05, "▼ Slight Decline",
+    "▼▼ Significant Decline"
+)
+
+// Customer Health Score (composite)
+Customer Health Score =
+VAR RepeatRate   = [Repeat Customer Rate %] / 100
+VAR AvgCLV       = [Average CLV]
+VAR ScoreRepeat  = RepeatRate * 40        -- 40% weight
+VAR ScoreCLV     = MIN(AvgCLV / 1000, 1) * 60 -- 60% weight, capped at $1,000
+RETURN
+ROUND(ScoreRepeat + ScoreCLV, 1)

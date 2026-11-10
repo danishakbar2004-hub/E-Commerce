@@ -1,0 +1,52 @@
+# ==============================================================
+# .gitignore - E-Commerce Analytics Platform
+# ==============================================================
+
+# Python cache & environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# IDE & Editor settings
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs & temp files
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Raw Datasets
+# Kaggle raw dataset is ~120MB+ (geolocation CSV alone is ~58MB and triggers GitHub warnings).
+# Raw data can be re-downloaded via the script or Kaggle link documented in README.
+**/data/raw/*.csv
+!**/data/raw/.gitkeep

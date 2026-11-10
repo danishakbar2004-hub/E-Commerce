@@ -1,0 +1,190 @@
+// ============================================================
+// POWER BI DAX MEASURES
+// File: 04_regional_measures.dax
+// Dashboard: Regional Sales Analysis
+// ============================================================
+
+
+// ============================================================
+// SECTION 1: REGIONAL REVENUE MEASURES
+// ============================================================
+
+// Revenue by Region (works with region slicer/filter)
+Region Revenue =
+CALCULATE(
+    [Total Net Revenue],
+    ALLEXCEPT(dim_regions, dim_regions[region_name])
+)
+
+// Region Revenue Rank
+Region Revenue Rank =
+RANKX(
+    ALL(dim_regions[region_name]),
+    [Total Net Revenue],
+    ,
+    DESC,
+    DENSE
+)
+
+// Region Revenue Share %
+Region Revenue Share % =
+DIVIDE(
+    [Total Net Revenue],
+    CALCULATE([Total Net Revenue], ALL(dim_regions)),
+    0
+) * 100
+
+// Best Performing Region (for KPI card)
+Best Performing Region =
+CALCULATE(
+    FIRSTNONBLANK(dim_regions[region_name], 1),
+    TOPN(1, ALL(dim_regions[region_name]), [Total Net Revenue], DESC)
+)
+
+// Country Revenue Share %
+Country Revenue Share % =
+DIVIDE(
+    [Total Net Revenue],
+    CALCULATE([Total Net Revenue], ALL(dim_regions[country])),
+    0
+) * 100
+
+
+// ============================================================
+// SECTION 2: REGIONAL GROWTH MEASURES
+// ============================================================
+
+// Region MoM Growth %
+Region MoM Growth % =
+VAR CurrentRev = [Total Net Revenue]
+VAR PrevRev    = CALCULATE(
+    [Total Net Revenue],
+    PREVIOUSMONTH('dim_date'[date])
+)
+RETURN
+DIVIDE(CurrentRev - PrevRev, PrevRev, BLANK()) * 100
+
+// Region YoY Growth %
+Region YoY Growth % =
+VAR CurrentRev = [Total Net Revenue]
+VAR PriorYrRev = CALCULATE(
+    [Total Net Revenue],
+    SAMEPERIODLASTYEAR('dim_date'[date])
+)
+RETURN
+DIVIDE(CurrentRev - PriorYrRev, PriorYrRev, BLANK()) * 100
+
+// Fastest Growing Region Label (for card)
+Fastest Growing Region =
+VAR RegionGrowth =
+    ADDCOLUMNS(
+        ALL(dim_regions[region_name]),
+        "GrowthRate",
+        CALCULATE(
+            DIVIDE(
+                [Total Net Revenue] - CALCULATE([Total Net Revenue], PREVIOUSMONTH('dim_date'[date])),
+                CALCULATE([Total Net Revenue], PREVIOUSMONTH('dim_date'[date])),
+                BLANK()
+            )
+        )
+    )
+RETURN
+MAXX(
+    TOPN(1, RegionGrowth, [GrowthRate], DESC),
+    dim_regions[region_name]
+)
+
+
+// ============================================================
+// SECTION 3: REGIONAL CUSTOMER MEASURES
+// ============================================================
+
+// Customers Per Region
+Customers Per Region =
+CALCULATE(
+    DISTINCTCOUNT(fact_sales[customer_id]),
+    ALLEXCEPT(dim_regions, dim_regions[region_name])
+)
+
+// Average Order Value by Region
+Region AOV =
+DIVIDE(
+    CALCULATE([Total Net Revenue], ALLEXCEPT(dim_regions, dim_regions[region_name])),
+    CALCULATE([Total Orders],     ALLEXCEPT(dim_regions, dim_regions[region_name])),
+    0
+)
+
+// Revenue Per Customer by Region
+Region Revenue Per Customer =
+DIVIDE(
+    [Total Net Revenue],
+    CALCULATE(DISTINCTCOUNT(fact_sales[customer_id])),
+    0
+)
+
+
+// ============================================================
+// SECTION 4: MAP VISUAL MEASURES
+// ============================================================
+
+// Bubble Size for Map (normalized 1-100 for map bubble size)
+Map Bubble Size =
+VAR MaxRev = CALCULATE(
+    MAXX(ALL(dim_regions[region_name]), [Total Net Revenue])
+)
+RETURN
+DIVIDE([Total Net Revenue], MaxRev, 0) * 100
+
+// Region Color Intensity (for filled map — 0 to 1)
+Region Color Intensity =
+VAR MaxRev = CALCULATE(
+    MAXX(ALL(dim_regions[country]), [Total Net Revenue])
+)
+RETURN
+DIVIDE([Total Net Revenue], MaxRev, 0)
+
+// Region Tooltip Detail
+Region Tooltip =
+"Revenue: $" & FORMAT([Total Net Revenue], "#,##0")
+    & UNICHAR(10)
+    & "Orders: " & FORMAT([Total Orders], "#,##0")
+    & UNICHAR(10)
+    & "AOV: $" & FORMAT([Average Order Value], "#,##0.00")
+    & UNICHAR(10)
+    & "MoM Growth: " & FORMAT([Region MoM Growth %], "+0.0%;-0.0%;0.0%")
+
+
+// ============================================================
+// SECTION 5: SHIPPING & OPERATIONS MEASURES
+// ============================================================
+
+// Average Days to Ship (by region)
+Avg Days to Ship =
+AVERAGEX(
+    orders,
+    DATEDIFF(orders[order_date], orders[ship_date], DAY)
+)
+
+// On-Time Delivery Rate % (shipped within 5 days)
+On-Time Delivery Rate % =
+VAR DeliveredOnTime = CALCULATE(
+    COUNTROWS(orders),
+    DATEDIFF(orders[order_date], orders[ship_date], DAY) <= 5,
+    orders[status] = "Delivered"
+)
+VAR TotalDelivered = CALCULATE(
+    COUNTROWS(orders),
+    orders[status] = "Delivered"
+)
+RETURN
+DIVIDE(DeliveredOnTime, TotalDelivered, 0) * 100
+
+// Region Cancellation Rate %
+Region Cancellation Rate % =
+VAR AllOrders = CALCULATE(COUNTROWS(orders))
+VAR Cancelled = CALCULATE(
+    COUNTROWS(orders),
+    orders[status] = "Cancelled"
+)
+RETURN
+DIVIDE(Cancelled, AllOrders, 0) * 100
